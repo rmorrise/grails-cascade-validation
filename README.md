@@ -9,7 +9,7 @@ To use this plugin, add the plugin to BuildConfig.groovy:
 
      plugins {
          //CSC custom plugin for 'cascade' constraint
-         compile ":cascade-validation:0.1.1"
+         compile ":cascade-validation:0.1.2"
      }
 Here is an example of a command object that uses the plugin:
 
