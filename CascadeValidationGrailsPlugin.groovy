@@ -2,7 +2,7 @@ import com.cscinfo.platform.constraint.CascadeValidationConstraint
 import org.codehaus.groovy.grails.validation.ConstrainedProperty
 
 class CascadeValidationGrailsPlugin {
-    def version = "0.1.1"
+    def version = "0.1.2"
     def grailsVersion = "2.3 > *"
     def title = "Cascade Validation Plugin"
     def author = "Russell Morrisey"
