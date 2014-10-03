@@ -1,6 +1,5 @@
 package com.cscinfo.platform.constraint
 
-import grails.validation.ValidationErrors
 import org.codehaus.groovy.grails.validation.AbstractVetoingConstraint
 import org.springframework.validation.Errors
 import org.springframework.validation.FieldError
@@ -19,27 +18,19 @@ import org.springframework.validation.FieldError
 class CascadeValidationConstraint extends AbstractVetoingConstraint {
     public static final String NAME = "cascade"
 
-    /**
-     * @return The name of the constraint
-     */
-    @Override
-    String getName() {
-        return NAME
-    }
+    String getName() { NAME }
 
     @Override
-    protected boolean processValidateWithVetoing(final Object target, final Object propertyValue, final Errors errors) {
-        def result
-        if (propertyValue instanceof Collection) {
-            result = false
-            propertyValue.each {
-                result = validateValue(target, it, errors) || result
-            }
+    protected boolean processValidateWithVetoing(target, propertyValue, Errors errors) {
+        if (!(propertyValue instanceof Collection)) {
+            return validateValue(target, propertyValue, errors)
         }
-        else {
-            result = validateValue(target, propertyValue, errors)
+
+        boolean result = false
+        for (value in propertyValue) {
+            result = validateValue(target, value, errors) || result
         }
-        return result
+        result
     }
 
     private boolean validateValue(target, propertyValue, errors) {
@@ -47,26 +38,20 @@ class CascadeValidationConstraint extends AbstractVetoingConstraint {
             throw new NoSuchMethodException("Error validating field [${constraintPropertyName}]. Unable to apply 'cascade' constraint on [${propertyValue.class}] because the object does not have a validate() method. If the object is a command object, you may need to add the @Validateable annotation to the class definition.")
         }
 
-        if (!propertyValue.validate()) {
-            propertyValue.errors.fieldErrors.each {
-                String field = "${propertyName}.${it.field}"
-                def fieldError = new FieldError(target.errors.objectName, field, it.rejectedValue, it.bindingFailure, it.codes,
-                        it.arguments, it.defaultMessage)
-                ((ValidationErrors) errors).addError(fieldError)
-            }
-            return true
+        if (propertyValue.validate()) {
+            return false
         }
-        return false
+
+        String objectName = target.errors.objectName
+        propertyValue.errors.fieldErrors.each { FieldError fieldError ->
+            String field = "${propertyName}.${fieldError.field}"
+            errors.addError(new FieldError(objectName, field, fieldError.rejectedValue, fieldError.bindingFailure,
+                fieldError.codes, fieldError.arguments, fieldError.defaultMessage))
+        }
+        return true
     }
 
-    /**
-     * Returns whether the constraint supports being applied against the specified type;
-     *
-     * @param type The type to support
-     * @return true if the constraint can be applied against the specified type
-     */
-    @Override
-    boolean supports(final Class type) {
+    boolean supports(Class type) {
         Collection.isAssignableFrom(type) || type.metaClass.respondsTo(type, 'validate')
     }
 }
