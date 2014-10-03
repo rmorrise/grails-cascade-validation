@@ -4,3 +4,4 @@
 grails-cascade-validation-*.zip
 grails-cascade-validation-*.zip.sha1
 plugin.xml
+*.iws
