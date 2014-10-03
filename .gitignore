@@ -1,1 +1,6 @@
-target
+/.settings
+/target
+/web-app/WEB-INF
+grails-cascade-validation-*.zip
+grails-cascade-validation-*.zip.sha1
+plugin.xml
