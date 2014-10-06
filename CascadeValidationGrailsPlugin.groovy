@@ -2,7 +2,7 @@ import com.cscinfo.platform.constraint.CascadeValidationConstraint
 import org.codehaus.groovy.grails.validation.ConstrainedProperty
 
 class CascadeValidationGrailsPlugin {
-    def version = "0.1.2"
+    def version = "0.1.3"
     def grailsVersion = "2.3 > *"
     def title = "Cascade Validation Plugin"
     def author = "Russell Morrisey"
@@ -16,7 +16,7 @@ Based on a blog post by Eric Kelm:
  http://asoftwareguy.com/2013/07/01/grails-cascade-validation-for-pogos/
 Used with permission.
 '''
-    def documentation = "http://grails.org/plugin/cascade-validation"
+    def documentation = "https://github.com/rmorrise/grails-cascade-validation/wiki/How-to-use-cascade-validation"
     def license = "APACHE"
     def organization = [ name: "Corporation Service Company", url: "http://www.cscinfo.com/" ]
     def issueManagement = [system: 'GITHUB', url: 'https://github.com/rmorrise/grails-cascade-validation/issues']
