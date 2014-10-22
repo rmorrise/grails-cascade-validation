@@ -22,31 +22,40 @@ class CascadeValidationConstraint extends AbstractVetoingConstraint {
 
     @Override
     protected boolean processValidateWithVetoing(target, propertyValue, Errors errors) {
-        if (!(propertyValue instanceof Collection)) {
-            return validateValue(target, propertyValue, errors)
+        boolean result = false
+
+        if (propertyValue instanceof Collection) {
+            propertyValue.eachWithIndex { item, pvIdx ->
+                result = validateValue(target, item, errors, pvIdx) || result
+            }
+        } else {
+            result = validateValue(target, propertyValue, errors)
         }
 
-        boolean result = false
-        for (value in propertyValue) {
-            result = validateValue(target, value, errors) || result
-        }
-        result
+        return result
     }
 
-    private boolean validateValue(target, propertyValue, errors) {
-        if (!propertyValue.respondsTo('validate')) {
-            throw new NoSuchMethodException("Error validating field [${constraintPropertyName}]. Unable to apply 'cascade' constraint on [${propertyValue.class}] because the object does not have a validate() method. If the object is a command object, you may need to add the @Validateable annotation to the class definition.")
+    private boolean validateValue(target, value, errors, index = null) {
+        if (!value.respondsTo('validate')) {
+            throw new NoSuchMethodException("Error validating field [${constraintPropertyName}]. Unable to apply 'cascade' constraint on [${value.class}] because the object does not have a validate() method. If the object is a command object, you may need to add the @Validateable annotation to the class definition.")
         }
 
-        if (propertyValue.validate()) {
+        if (value.validate()) {
             return false
         }
 
         String objectName = target.errors.objectName
-        propertyValue.errors.fieldErrors.each { FieldError fieldError ->
-            String field = "${propertyName}.${fieldError.field}"
-            errors.addError(new FieldError(objectName, field, fieldError.rejectedValue, fieldError.bindingFailure,
-                fieldError.codes, fieldError.arguments, fieldError.defaultMessage))
+        Errors childErrors = value.errors
+        List<FieldError> childFieldErrors = childErrors.fieldErrors
+        childFieldErrors.each { FieldError childFieldError ->
+            String field
+            if(index) {
+                field = "${propertyName}.${index}.${childFieldError.field}"
+            } else {
+                field = "${propertyName}.${childFieldError.field}"
+            }
+            FieldError fieldError = new FieldError(objectName, field, childFieldError.rejectedValue, childFieldError.bindingFailure, childFieldError.codes, childFieldError.arguments, childFieldError.defaultMessage)
+            errors.addError(fieldError)
         }
         return true
     }
