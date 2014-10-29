@@ -77,7 +77,9 @@ class CascadeValidationConstraintSpec extends Specification {
         String[] codes = ['A', 'B']
         def defaultMessage = 'default'
         Object[] args = [Mock(Object)]
-        def fieldError = new FieldError('obj', 'field', rejected, true, codes,
+
+        def field = 'field'
+        def fieldError = new FieldError('obj', field, rejected, true, codes,
                 args, defaultMessage)
         def fieldErrors = [fieldError]
         def parentName = 'foo'
@@ -91,8 +93,12 @@ class CascadeValidationConstraintSpec extends Specification {
         1 * childErrors.fieldErrors >> fieldErrors
         1 * errors.objectName >> parentName
         1 * errors.addError({
-            it.objectName == parentName && it.bindingFailure == true && it.codes == codes && it.arguments == args && it
-                    .defaultMessage == defaultMessage
+            it.objectName == parentName &&
+                    it.field == "property." + field &&
+                    it.bindingFailure == true &&
+                    it.codes == codes &&
+                    it.arguments == args &&
+                    it.defaultMessage == defaultMessage
         })
         result == true
     }
@@ -112,7 +118,8 @@ class CascadeValidationConstraintSpec extends Specification {
         String[] codes = ['A', 'B']
         def defaultMessage = 'default'
         Object[] args = [Mock(Object)]
-        def fieldError = new FieldError('obj', 'field', rejected, true, codes,
+        def field = 'field'
+        def fieldError = new FieldError('obj', field, rejected, true, codes,
                 args, defaultMessage)
         def fieldErrors = [fieldError]
         def parentName = 'foo'
@@ -128,9 +135,20 @@ class CascadeValidationConstraintSpec extends Specification {
         1 * child1Errors.fieldErrors >> fieldErrors
         1 * child2Errors.fieldErrors >> fieldErrors
         target.size() * errors.objectName >> parentName
-        target.size() * errors.addError({
-            it.objectName == parentName && it.bindingFailure == true && it.codes == codes && it.arguments == args && it
-                    .defaultMessage == defaultMessage
+        1 * errors.addError({
+            it.objectName == parentName &&
+                    it.field == "children.0." + field &&
+                    it.bindingFailure == true &&
+                    it.codes == codes &&
+                    it.arguments == args &&
+                    it.defaultMessage == defaultMessage
+        })
+        1 * errors.addError({
+            it.objectName == parentName && it.field == "children.1." + field &&
+                    it.bindingFailure == true &&
+                    it.codes == codes &&
+                    it.arguments == args &&
+                    it.defaultMessage == defaultMessage
         })
         result == true
     }

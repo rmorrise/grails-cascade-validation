@@ -49,7 +49,7 @@ class CascadeValidationConstraint extends AbstractVetoingConstraint {
         List<FieldError> childFieldErrors = childErrors.fieldErrors
         childFieldErrors.each { FieldError childFieldError ->
             String field
-            if(index) {
+            if(index != null) {
                 field = "${propertyName}.${index}.${childFieldError.field}"
             } else {
                 field = "${propertyName}.${childFieldError.field}"
