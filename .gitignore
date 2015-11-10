@@ -1,11 +1,13 @@
-/grails-cascade-validation.ipr
 /.settings
 /.idea
+/.gradle
 /target
 /classes
+/build
 /web-app/WEB-INF
 grails-cascade-validation-*.zip
 grails-cascade-validation-*.zip.sha1
 plugin.xml
+*.ipr
 *.iws
 *.iml
