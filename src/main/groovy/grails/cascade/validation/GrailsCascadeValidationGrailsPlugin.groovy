@@ -26,7 +26,9 @@ Used with permission.
     def issueManagement = [system: 'GITHUB', url: 'https://github.com/rmorrise/grails-cascade-validation/issues']
     def scm = [url: 'https://github.com/rmorrise/grails-cascade-validation']
 
-    def doWithApplicationContext = { ctx ->
+    def developers = [ [ name: "Soeren Glasius", email: "soeren@glasius.dk" ]]
+
+    void doWithApplicationContext() { 
         ConstrainedProperty.registerNewConstraint(CascadeValidationConstraint.NAME, CascadeValidationConstraint)
     }
 
