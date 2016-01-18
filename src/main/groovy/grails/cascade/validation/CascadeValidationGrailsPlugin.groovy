@@ -4,7 +4,7 @@ import com.cscinfo.platform.constraint.CascadeValidationConstraint
 import grails.plugins.Plugin
 import grails.validation.ConstrainedProperty
 
-class GrailsCascadeValidationGrailsPlugin extends Plugin {
+class CascadeValidationGrailsPlugin extends Plugin {
 
     def grailsVersion = "3.0.9 > *"
     def profiles = ['web']

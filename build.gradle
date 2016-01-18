@@ -16,7 +16,7 @@ plugins {
     id "com.jfrog.bintray" version "1.2"
 }
 
-version "2.0.0-SNAPSHOT"
+version "2.0.2"
 group "org.grails.plugins"
 
 apply plugin: 'maven-publish'
@@ -68,3 +68,22 @@ dependencies {
 task wrapper(type: Wrapper) {
     gradleVersion = gradleWrapperVersion
 }
+
+bintray {
+    user = System.getenv("BINTRAY_USER") ?: project.hasProperty("bintrayUser") ? project.bintrayUser : ''
+    key = System.getenv("BINTRAY_KEY") ?: project.hasProperty("bintrayKey") ? project.bintrayKey : ''
+    publications = ['maven']
+    pkg {
+        repo = 'grails-plugins'
+        userOrg = 'ctoestreich'
+        name = "cascade-validation"
+        desc = "Grails Cascade Validation Plugin"
+        websiteUrl = "http://grails.org/plugin/grails-cascade-validation"
+        issueTrackerUrl = "https://github.com/Grails-Plugin-Consortium/grails-cascade-validation/issues"
+        vcsUrl = "https://github.com/Grails-Plugin-Consortium/grails-cascade-validation"
+        licenses = ['Apache-2.0']
+        publicDownloadNumbers = true
+    }
+}
+
+bintrayUpload.dependsOn sourcesJar, javadocJar
