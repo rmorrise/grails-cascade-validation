@@ -4,7 +4,7 @@ import com.cscinfo.platform.constraint.CascadeValidationConstraint
 import grails.plugins.Plugin
 import org.grails.datastore.gorm.validation.constraints.factory.DefaultConstraintFactory
 
-class GrailsCascadeValidationGrailsPlugin extends Plugin {
+class CascadeValidationGrailsPlugin extends Plugin {
 
     def grailsVersion = "3.3.0 > *"
     def title = "Cascade Validation Plugin"

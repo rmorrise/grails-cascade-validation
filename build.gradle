@@ -7,13 +7,27 @@ buildscript {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
     }
 }
+
+plugins {
+    id "io.spring.dependency-management" version "0.5.2.RELEASE"
+    id "com.jfrog.bintray" version "1.2"
+}
+
 version "3.0.1-SNAPSHOT"
 group "org.grails.plugins"
 
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: "org.grails.grails-plugin"
-apply plugin: "org.grails.grails-plugin-publish"
+apply plugin: "org.grails.grails-gsp"
+// Used for publishing to central repository, remove if not needed
+apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/grailsCentralPublishing.gradle'
+apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/bintrayPublishing.gradle'
+
+ext {
+    grailsVersion = project.grailsVersion
+    gradleWrapperVersion = project.gradleWrapperVersion
+}
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -53,3 +67,22 @@ grailsPublish {
     desc = """This plugin establishes a 'cascade' constraint property for validateable objects. If "cascade:true" is set on a nested object, the nested object's validate() method will be invoked and the results will be reported as part of the parent object's validation."""
     developers = [rmorrise:"Russell Morrisey", sbglasius: "Søren Berg Glasius", asoftwareguy: "Eric Kelm", burtbeckwith: "Burt Beckwith"]
 }
+
+bintray {
+    user = System.getenv("BINTRAY_USER") ?: project.hasProperty("bintrayUser") ? project.bintrayUser : ''
+    key = System.getenv("BINTRAY_KEY") ?: project.hasProperty("bintrayKey") ? project.bintrayKey : ''
+    publications = ['maven']
+    pkg {
+        repo = 'grails-plugins'
+        userOrg = 'ctoestreich'
+        name = "cascade-validation"
+        desc = "Grails Cascade Validation Plugin"
+        websiteUrl = "http://grails.org/plugin/grails-cascade-validation"
+        issueTrackerUrl = "https://github.com/Grails-Plugin-Consortium/grails-cascade-validation/issues"
+        vcsUrl = "https://github.com/Grails-Plugin-Consortium/grails-cascade-validation"
+        licenses = ['Apache-2.0']
+        publicDownloadNumbers = true
+    }
+}
+
+bintrayUpload.dependsOn sourcesJar, javadocJar
