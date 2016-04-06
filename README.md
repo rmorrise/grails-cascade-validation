@@ -45,3 +45,14 @@ Here is an example of a command object that uses the plugin:
 When the cascade: constraint is added on the telephoneType property, this enables nested validation. When the phoneNumber.validate() method is called, the telephoneType.validate() method will also be invoked. Field errors that are added to the telephoneType will also be added to the parent phoneNumber object.
 
 This plugin was originally based on a blog post by Eric Kelm and is used here with Eric's permission.
+
+NOTE:
+
+When running a unit test, the cascade constraint isn't registered with grails. To work around this issue, the following code must be added to the setup() method of the test:
+
+```groovy
+    def setup() {
+        ConstrainedProperty.registerNewConstraint(CascadeValidationConstraint.NAME, CascadeValidationConstraint)
+    }
+```
+
