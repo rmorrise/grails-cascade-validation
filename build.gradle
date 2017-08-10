@@ -1,7 +1,4 @@
 buildscript {
-    ext {
-        grailsVersion = project.grailsVersion
-    }
     repositories {
         mavenLocal()
         maven { url "https://repo.grails.org/grails/core" }
@@ -10,44 +7,13 @@ buildscript {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
     }
 }
-
-plugins {
-    id "io.spring.dependency-management" version "0.5.2.RELEASE"
-    id "com.jfrog.bintray" version "1.2"
-}
-
-version "2.0.0-SNAPSHOT"
+version "3.0.0-SNAPSHOT"
 group "org.grails.plugins"
 
-apply plugin: 'maven-publish'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin: "spring-boot"
 apply plugin: "org.grails.grails-plugin"
 apply plugin: "org.grails.grails-plugin-publish"
-apply plugin: "org.grails.grails-gsp"
-// Used for publishing to central repository, remove if not needed
-//apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/grailsCentralPublishing.gradle'
-//apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/bintrayPublishing.gradle'
-
-grailsPublish {
-//    user = 'user'  // Not required if you defined BINTRAY_USER var
-//    key = 'key'    // Not required if you defined BINTRAY_KEY var
-    userOrg = 'cscpublicgrails' // Optional
-    repo = 'plugins'       // Optional, default to 'plugins'
-    githubSlug = 'rmorrise/grails-cascade-validation'
-    license {
-        name = 'Apache-2.0'
-    }
-    title = "grails-cascade-validation"
-    desc = "This plugin establishes a 'cascade' constraint property for validateable objects. If "cascade:true" is set on a nested object, the nested object's validate() method will be invoked and the results will be reported as part of the parent object's validation."
-    developers = [rmorrise:"Russell Morrisey", sbglasius: "Søren Berg Glasius", asoftwareguy: "Eric Kelm", burtbeckwith: "Burt Beckwith"]
-}
-
-ext {
-    grailsVersion = project.grailsVersion
-    gradleWrapperVersion = project.gradleWrapperVersion
-}
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -58,28 +24,31 @@ repositories {
     maven { url "https://repo.grails.org/grails/core" }
 }
 
-dependencyManagement {
-    imports {
-        mavenBom "org.grails:grails-bom:$grailsVersion"
-    }
-    applyMavenExclusions false
-}
-
 dependencies {
-    provided 'org.springframework.boot:spring-boot-starter-logging'
-    provided "org.springframework.boot:spring-boot-starter-actuator"
-    provided "org.springframework.boot:spring-boot-autoconfigure"
-    provided "org.springframework.boot:spring-boot-starter-tomcat"
-
-    provided "org.grails:grails-web-boot"
-    provided "org.grails:grails-dependencies"
-    provided 'javax.servlet:javax.servlet-api:3.1.0'
-
-    testCompile "org.grails:grails-plugin-testing"
-
+    compile 'org.springframework.boot:spring-boot-starter-logging'
+    compile "org.springframework.boot:spring-boot-autoconfigure"
+    compile "org.grails:grails-core"
     console "org.grails:grails-console"
+    profile "org.grails.profiles:plugin"
+    provided "org.grails:grails-plugin-services"
+    provided "org.grails:grails-plugin-domain-class"
+    testCompile "org.grails:grails-gorm-testing-support"
+    testCompile "org.grails:grails-plugin-testing"
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = gradleWrapperVersion
+bootRun {
+    jvmArgs('-Dspring.output.ansi.enabled=always')
+    addResources = true
+}
+
+grailsPublish {
+    userOrg = 'cscpublicgrails' // Optional
+    repo = 'plugins'       // Optional, default to 'plugins'
+    githubSlug = 'rmorrise/grails-cascade-validation'
+    license {
+        name = 'Apache-2.0'
+    }
+    title = "grails-cascade-validation"
+    desc = "This plugin establishes a 'cascade' constraint property for validateable objects. If "cascade:true" is set on a nested object, the nested object's validate() method will be invoked and the results will be reported as part of the parent object's validation."
+    developers = [rmorrise:"Russell Morrisey", sbglasius: "Søren Berg Glasius", asoftwareguy: "Eric Kelm", burtbeckwith: "Burt Beckwith"]
 }
