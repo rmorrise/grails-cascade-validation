@@ -1,6 +1,6 @@
 ---
 grails:
-    profile: web-plugin
+    profile: plugin
     codegen:
         defaultPackage: grails.cascade.validation
 info:

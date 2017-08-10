@@ -2,12 +2,11 @@ package grails.cascade.validation
 
 import com.cscinfo.platform.constraint.CascadeValidationConstraint
 import grails.plugins.Plugin
-import grails.validation.ConstrainedProperty
+import org.grails.datastore.gorm.validation.constraints.factory.DefaultConstraintFactory
 
 class GrailsCascadeValidationGrailsPlugin extends Plugin {
 
-    def grailsVersion = "3.0.9 > *"
-    def profiles = ['web']
+    def grailsVersion = "3.3.0 > *"
     def title = "Cascade Validation Plugin"
     def author = "Russell Morrisey"
     def authorEmail = "rmorrise@cscinfo.com"
@@ -22,14 +21,14 @@ Used with permission.
 '''
     def documentation = "https://github.com/rmorrise/grails-cascade-validation/wiki/How-to-use-cascade-validation"
     def license = "APACHE"
-    def organization = [name: "Corporation Service Company", url: "http://www.cscinfo.com/"]
+    def organization = [name: "CSC", url: "http://www.cscglobal.com/"]
     def issueManagement = [system: 'GITHUB', url: 'https://github.com/rmorrise/grails-cascade-validation/issues']
     def scm = [url: 'https://github.com/rmorrise/grails-cascade-validation']
 
-    def developers = [ [ name: "Soeren Glasius", email: "soeren@glasius.dk" ]]
+    def developers = [ [ name: "Soeren Glasius", email: "soeren@glasius.dk" ], [ name: "Russell Morrisey", email: "russell.morrisey@cscglobal.com" ]]
 
-    void doWithApplicationContext() { 
-        ConstrainedProperty.registerNewConstraint(CascadeValidationConstraint.NAME, CascadeValidationConstraint)
-    }
-
+    //Class<? extends Constraint> constraintClass, MessageSource messageSource, List<Class> targetTypes = [Object]
+    Closure doWithSpring() {{ ->
+        cascadeValidationConstraintFactory(DefaultConstraintFactory, CascadeValidationConstraint, null)
+    }}
 }
