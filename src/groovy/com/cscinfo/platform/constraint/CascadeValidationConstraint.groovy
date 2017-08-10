@@ -36,6 +36,10 @@ class CascadeValidationConstraint extends AbstractVetoingConstraint {
     }
 
     private boolean validateValue(target, value, errors, index = null) {
+        if (value == null) {
+            return true
+        }
+
         if (!value.respondsTo('validate')) {
             throw new NoSuchMethodException("Error validating field [${constraintPropertyName}]. Unable to apply 'cascade' constraint on [${value.class}] because the object does not have a validate() method. If the object is a command object, you may need to add the @Validateable annotation to the class definition.")
         }
