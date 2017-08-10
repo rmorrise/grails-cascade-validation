@@ -4,6 +4,7 @@ import com.cscinfo.platform.constraint.support.ValidateableParentWithChildList
 import com.cscinfo.platform.constraint.support.ValidateableProperty
 import com.cscinfo.platform.constraint.support.ValidateableParent
 import grails.validation.ValidationErrors
+import org.springframework.context.MessageSource
 import org.springframework.validation.Errors
 import org.springframework.validation.FieldError
 import spock.lang.Specification
@@ -16,19 +17,21 @@ class CascadeValidationConstraintSpec extends Specification {
     CascadeValidationConstraint constraint
     ValidateableParent parent
     ValidationErrors errors
+    MessageSource messageSource
 
     def setup() {
         parent = Mock(ValidateableParent)
         errors = Mock(ValidationErrors)
         parent.errors >> errors
+        messageSource = Mock(MessageSource)
     }
 
     def "constraint name should be cascade"() {
         given:
         constraint = new CascadeValidationConstraint(
-                owningClass: ValidateableParent,
-                propertyName: 'property',
-                constraintParameter: true)
+                ValidateableParent,
+                'property',
+                true, messageSource)
 
         expect:
         constraint.name == 'cascade'
@@ -37,9 +40,9 @@ class CascadeValidationConstraintSpec extends Specification {
     def "validateWithVetoing fails when constraint is set on non-validatable type"() {
         given:
         constraint = new CascadeValidationConstraint(
-                owningClass: ValidateableParent,
-                propertyName: 'property',
-                constraintParameter: true)
+                ValidateableParent,
+                'property',
+                true, messageSource)
         def target = "Some value"
 
         when:
@@ -52,9 +55,9 @@ class CascadeValidationConstraintSpec extends Specification {
     def "validateWithVetoing returns valid when constraint is set to validateable type and constraints pass"() {
         given:
         constraint = new CascadeValidationConstraint(
-                owningClass: ValidateableParent,
-                propertyName: 'property',
-                constraintParameter: true)
+                ValidateableParent,
+                'property',
+                true, messageSource)
         def target = Mock(ValidateableProperty)
 
         when:
@@ -68,9 +71,9 @@ class CascadeValidationConstraintSpec extends Specification {
     def "validateWithVetoing returns invalid when constraint is set to validateable type and constraints fail"() {
         given:
         constraint = new CascadeValidationConstraint(
-                owningClass: ValidateableParent,
-                propertyName: 'property',
-                constraintParameter: true)
+                ValidateableParent,
+                'property',
+                true, messageSource)
         def target = Mock(ValidateableProperty)
         def childErrors = Mock(Errors)
         def rejected = Mock(Object)
@@ -106,9 +109,9 @@ class CascadeValidationConstraintSpec extends Specification {
     def "validateWithVetoing returns invalid when constraint is set to validateable type and constraints fail on list"() {
         given:
         constraint = new CascadeValidationConstraint(
-                owningClass: ValidateableParentWithChildList,
-                propertyName: 'children',
-                constraintParameter: true)
+                ValidateableParentWithChildList,
+                'children',
+                true, messageSource)
         def child1 = Mock(ValidateableProperty)
         def child2 = Mock(ValidateableProperty)
         def child1Errors = Mock(Errors)
@@ -156,9 +159,9 @@ class CascadeValidationConstraintSpec extends Specification {
     def "constraint does not support non-validateable types"() {
         given:
         constraint = new CascadeValidationConstraint(
-                owningClass: ValidateableParent,
-                propertyName: 'property',
-                constraintParameter: true)
+                ValidateableParent,
+                'property',
+                true, messageSource)
 
         expect:
         !constraint.supports(String)
@@ -167,9 +170,9 @@ class CascadeValidationConstraintSpec extends Specification {
     def "constraint supports validateable types"() {
         given:
         constraint = new CascadeValidationConstraint(
-                owningClass: ValidateableParent,
-                propertyName: 'property',
-                constraintParameter: true)
+                ValidateableParent,
+                'property',
+                true, messageSource)
 
         expect:
         constraint.supports(ValidateableProperty)
@@ -178,9 +181,9 @@ class CascadeValidationConstraintSpec extends Specification {
     def "constraint supports collection types"() {
         given:
         constraint = new CascadeValidationConstraint(
-                owningClass: ValidateableParent,
-                propertyName: 'property',
-                constraintParameter: true)
+                ValidateableParent,
+                'property',
+                true, messageSource)
 
         expect:
         constraint.supports(List)

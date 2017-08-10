@@ -1,6 +1,7 @@
 package com.cscinfo.platform.constraint
 
-import grails.validation.AbstractVetoingConstraint
+import org.grails.datastore.gorm.validation.constraints.AbstractVetoingConstraint
+import org.springframework.context.MessageSource
 import org.springframework.validation.Errors
 import org.springframework.validation.FieldError
 
@@ -17,6 +18,13 @@ import org.springframework.validation.FieldError
  */
 class CascadeValidationConstraint extends AbstractVetoingConstraint {
     public static final String NAME = "cascade"
+
+    private final boolean cascade
+
+    CascadeValidationConstraint(Class<?> constraintOwningClass, String constraintPropertyName, Object constraintParameter, MessageSource messageSource) {
+        super(constraintOwningClass, constraintPropertyName, constraintParameter, messageSource)
+        this.cascade = (Boolean) constraintParameter
+    }
 
     String getName() { NAME }
 
@@ -62,5 +70,16 @@ class CascadeValidationConstraint extends AbstractVetoingConstraint {
 
     boolean supports(Class type) {
         Collection.isAssignableFrom(type) || type.metaClass.respondsTo(type, 'validate')
+    }
+
+    @Override
+    protected Object validateParameter(Object constraintParameter) {
+        if (!(constraintParameter instanceof Boolean)) {
+            throw new IllegalArgumentException("Parameter for constraint [" +
+                    NAME+ "] of property [" +
+                    constraintPropertyName + "] of class [" + constraintOwningClass +
+                    "] must be a boolean value")
+        }
+        return constraintParameter
     }
 }
