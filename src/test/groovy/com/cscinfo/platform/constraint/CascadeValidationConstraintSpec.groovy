@@ -34,7 +34,7 @@ class CascadeValidationConstraintSpec extends Specification {
                 true, messageSource)
 
         expect:
-        constraint.name == 'cascade'
+        constraint.name == 'cascadeValidate'
     }
 
     def "validateWithVetoing fails when constraint is set on non-validatable type"() {

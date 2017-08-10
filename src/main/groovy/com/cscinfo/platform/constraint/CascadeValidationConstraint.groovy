@@ -17,7 +17,7 @@ import org.springframework.validation.FieldError
  * @author Russell Morrisey
  */
 class CascadeValidationConstraint extends AbstractVetoingConstraint {
-    public static final String NAME = "cascade"
+    public static final String NAME = "cascadeValidate"
 
     private final boolean cascade
 
