@@ -5,13 +5,18 @@ See: [https://github.com/rmorrise/grails-cascade-validation/wiki/How-to-use-casc
 
 This plugin establishes a 'cascade' constraint property for validateable objects. If "cascade:true" is set on a nested object, the nested object's validate() method will be invoked and the results will be reported as part of the parent object's validation.
 
-To use this plugin, add the plugin to BuildConfig.groovy:
-```groovy
-     plugins {
-         //CSC custom plugin for 'cascade' constraint
-         compile ":cascade-validation:3.0.0"
-     }
- ```
+To use this plugin, add the add the plugin to `build.gradle`:
+```
+repositories {
+    maven { url "https://dl.bintray.com/cscpublicgrails/plugins/" }
+}
+
+dependencies {
+     //CSC custom plugin for 'cascade' constraint
+     compile ":cascade-validation:3.0.0"
+}
+```
+
 Here is an example of a command object that uses the plugin:
 ```groovy
  @Validateable
