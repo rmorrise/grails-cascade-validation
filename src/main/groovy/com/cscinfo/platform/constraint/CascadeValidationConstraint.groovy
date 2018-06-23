@@ -1,5 +1,7 @@
 package com.cscinfo.platform.constraint
 
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import org.grails.datastore.gorm.validation.constraints.AbstractVetoingConstraint
 import org.springframework.context.MessageSource
 import org.springframework.validation.Errors
@@ -16,6 +18,7 @@ import org.springframework.validation.FieldError
  * @author Eric Kelm
  * @author Russell Morrisey
  */
+@CompileStatic
 class CascadeValidationConstraint extends AbstractVetoingConstraint {
     public static final String NAME = "cascadeValidate"
 
@@ -43,6 +46,7 @@ class CascadeValidationConstraint extends AbstractVetoingConstraint {
         return result
     }
 
+    @CompileDynamic
     private boolean validateValue(target, value, errors, index = null) {
         if (!value.respondsTo('validate')) {
             throw new NoSuchMethodException("Error validating field [${constraintPropertyName}]. Unable to apply 'cascade' constraint on [${value.class}] because the object does not have a validate() method. If the object is a command object, you may need to add the @Validateable annotation to the class definition.")
