@@ -58,7 +58,11 @@ dependencies {
     provided "org.grails:grails-dependencies"
     provided 'javax.servlet:javax.servlet-api:3.1.0'
 
+    testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails:grails-plugin-testing"
+    testCompile "org.grails:grails-web-testing-support"
+    testCompile 'net.bytebuddy:byte-buddy-dep:1.8.12'
+
 
     console "org.grails:grails-console"
 }

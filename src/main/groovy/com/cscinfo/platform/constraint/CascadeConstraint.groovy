@@ -2,7 +2,7 @@ package com.cscinfo.platform.constraint
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import org.grails.datastore.gorm.validation.constraints.AbstractVetoingConstraint
+import org.grails.datastore.gorm.validation.constraints.AbstractConstraint
 import org.springframework.context.MessageSource
 import org.springframework.validation.Errors
 import org.springframework.validation.FieldError
@@ -19,69 +19,81 @@ import org.springframework.validation.FieldError
  * @author Russell Morrisey
  */
 @CompileStatic
-class CascadeValidationConstraint extends AbstractVetoingConstraint {
-    static final String NAME = "cascade"
+class CascadeConstraint extends AbstractConstraint {
+    boolean enabled = true
 
-    CascadeValidationConstraint(Class<?> constraintOwningClass, String constraintPropertyName, Object constraintParameter, MessageSource messageSource) {
+    static final String CASCADE_CONSTRAINT = "cascade"
+
+    CascadeConstraint(Class<?> constraintOwningClass, String constraintPropertyName, Object constraintParameter, MessageSource messageSource) {
         super(constraintOwningClass, constraintPropertyName, constraintParameter, messageSource)
+
+        if (!(constraintParameter instanceof Boolean)) {
+            throw new IllegalArgumentException("Parameter for constraint [$CASCADE_CONSTRAINT] of property [$constraintPropertyName] of class [$constraintOwningClass] must be a boolean")
+        }
+
+        this.enabled = (boolean) constraintParameter
     }
 
-    /**
-     * Not really sure what this is for, as the process validate still gets called...
-     * probably will ask about it at GR8Conf
-     *
-     * @param constraintParameter
-     * @return
-     */
     @Override
     protected Object validateParameter(Object constraintParameter) {
         return constraintParameter
     }
 
-    String getName() { NAME }
+    boolean supports(Class type) {
+        Collection.isAssignableFrom(type) || type.metaClass.respondsTo(type, 'validate')
+    }
 
-    @Override
-    protected boolean processValidateWithVetoing(target, propertyValue, Errors errors) {
+    String getName() {
+        return CASCADE_CONSTRAINT
+    }
+
+    protected void processValidate(Object target, Object propertyValue, Errors errors) {
+
         boolean result = false
 
         if (propertyValue instanceof Collection) {
             propertyValue.eachWithIndex { item, pvIdx ->
-                result = validateValue(target, item, errors, pvIdx) || result
+                validateValue(target, item, errors, pvIdx) || result
             }
         } else {
-            result = validateValue(target, propertyValue, errors)
+            validateValue(target, propertyValue, errors)
         }
-
-        return result
     }
 
+    /**
+     * Processes the validation of the propertyValue, against the checks patterns set, and setting and calling rejectValue
+     * if the propertyValue matches any of the patterns in the checks list.
+     *
+     * @param target The target field to verify.
+     * @param propertyValue the property value of the field.
+     * @param errors Errors to be sent by rejectValues,.
+     */
     @CompileDynamic
-    private boolean validateValue(target, value, errors, index = null) {
+    private void validateValue(target, value, errors, index = null) {
         if (!value.respondsTo('validate')) {
             throw new NoSuchMethodException("Error validating field [${constraintPropertyName}]. Unable to apply 'cascade' constraint on [${value.class}] because the object does not have a validate() method. If the object is a command object, you may need to add the @Validateable annotation to the class definition.")
         }
 
         if (value.validate()) {
-            return false
+            return
         }
 
         String objectName = target.errors.objectName
         Errors childErrors = value.errors
         List<FieldError> childFieldErrors = childErrors.fieldErrors
+
         childFieldErrors.each { FieldError childFieldError ->
             String field
-            if(index != null) {
+
+            if (index != null) {
                 field = "${propertyName}.${index}.${childFieldError.field}"
             } else {
                 field = "${propertyName}.${childFieldError.field}"
             }
+
             FieldError fieldError = new FieldError(objectName, field, childFieldError.rejectedValue, childFieldError.bindingFailure, childFieldError.codes, childFieldError.arguments, childFieldError.defaultMessage)
             errors.addError(fieldError)
         }
-        return true
     }
 
-    boolean supports(Class type) {
-        Collection.isAssignableFrom(type) || type.metaClass.respondsTo(type, 'validate')
-    }
 }
