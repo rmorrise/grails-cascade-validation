@@ -35,6 +35,8 @@ dependencies {
     testCompile "cglib:cglib-nodep:3.2.5"
     testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails:grails-plugin-testing"
+    testCompile "org.grails:grails-web-testing-support"
+    testCompile 'net.bytebuddy:byte-buddy-dep:1.8.12'
 }
 
 bootRun {
