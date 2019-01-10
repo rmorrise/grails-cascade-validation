@@ -51,5 +51,6 @@ grailsPublish {
     }
     title = "grails-cascade-validation"
     desc = """This plugin establishes a 'cascade' constraint property for validateable objects. If "cascade:true" is set on a nested object, the nested object's validate() method will be invoked and the results will be reported as part of the parent object's validation."""
-    developers = [rmorrise:"Russell Morrisey", sbglasius: "Søren Berg Glasius", asoftwareguy: "Eric Kelm", burtbeckwith: "Burt Beckwith"]
+    developers = [rmorrise:"Russell Morrisey", sbglasius: "Søren Berg Glasius", asoftwareguy: "Eric Kelm", burtbeckwith: "Burt Beckwith",
+                  ctoestreich: "Christian Oestreich", virtualdogbert: "Virtualdogbert"]
 }
