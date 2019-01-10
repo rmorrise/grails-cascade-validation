@@ -25,7 +25,13 @@ Used with permission.
     def issueManagement = [system: 'GITHUB', url: 'https://github.com/rmorrise/grails-cascade-validation/issues']
     def scm = [url: 'https://github.com/rmorrise/grails-cascade-validation']
 
-    def developers = [ [ name: "Soeren Glasius", email: "soeren@glasius.dk" ], [ name: "Russell Morrisey", email: "russell.morrisey@cscglobal.com" ]]
+    def developers = [
+            [ name: "Burt Beckwith", github: 'burtbeckwith'  ],
+            [ name: "Soeren Glasius", email: "soeren@glasius.dk", github: 'sbglasius' ],
+            [ name: "Eric Kelm", github: 'asoftwareguy' ],
+            [ name: "Russell Morrisey", email: "russell.morrisey@cscglobal.com", github: 'rmorrise' ],
+            [ name: "Christian Oestreich", github: 'ctoestreich' ]
+    ]
 
     //Class<? extends Constraint> constraintClass, MessageSource messageSource, List<Class> targetTypes = [Object]
     Closure doWithSpring() {{ ->
