@@ -52,6 +52,18 @@ dependencies {
     testCompile "org.grails:grails-plugin-testing"
 }
 
+grailsPublish {
+    userOrg = 'cscpublicgrails' // Optional
+    repo = 'plugins'       // Optional, default to 'plugins'
+    githubSlug = 'rmorrise/grails-cascade-validation'
+    license {
+        name = 'Apache-2.0'
+    }
+    title = "grails-cascade-validation"
+    desc = """This plugin establishes a 'cascade' constraint property for validateable objects. If "cascade:true" is set on a nested object, the nested object's validate() method will be invoked and the results will be reported as part of the parent object's validation."""
+    developers = [rmorrise:"Russell Morrisey", sbglasius: "Søren Berg Glasius", asoftwareguy: "Eric Kelm", burtbeckwith: "Burt Beckwith", ctoestreich: "Christian Oestreich"]
+}
+
 bintray {
     user = System.getenv("BINTRAY_USER") ?: project.hasProperty("bintrayUser") ? project.bintrayUser : ''
     key = System.getenv("BINTRAY_KEY") ?: project.hasProperty("bintrayKey") ? project.bintrayKey : ''
