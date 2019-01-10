@@ -1,6 +1,7 @@
 package com.cscinfo.platform.constraint
 
 import com.cscinfo.platform.constraint.support.ValidateableParent
+import com.cscinfo.platform.constraint.support.ValidateableParentWithChildList
 import com.cscinfo.platform.constraint.support.ValidateableProperty
 import grails.validation.ValidationErrors
 import org.springframework.context.MessageSource
@@ -11,7 +12,7 @@ import spock.lang.Specification
  * @author: rmorrise
  * @author Eric Kelm
  */
-class CascadeValidationConstraintSpec extends Specification {
+class CascadeConstraintSpec extends Specification {
     CascadeConstraint  constraint
     ValidateableParent parent
     ValidationErrors errors
@@ -35,7 +36,7 @@ class CascadeValidationConstraintSpec extends Specification {
         constraint.name == 'cascade'
     }
 
-    def "validateWithVetoing fails when constraint is set on non-validatable type"() {
+    def "validate fails when constraint is set on non-validatable type"() {
         given:
         constraint = new CascadeConstraint(
                 ValidateableParent,
@@ -50,7 +51,7 @@ class CascadeValidationConstraintSpec extends Specification {
         thrown(NoSuchMethodException)
     }
 
-    def "validateWithVetoing returns valid when constraint is set to validateable type and constraints pass"() {
+    def "validate returns valid when constraint is set to validateable type and constraints pass"() {
         given:
         constraint = new CascadeConstraint(
                 ValidateableParent,
@@ -66,7 +67,11 @@ class CascadeValidationConstraintSpec extends Specification {
         0 * errors.addError(_)
     }
 
-    def "validateWithVetoing returns invalid when constraint is set to validateable type and constraints fail"() {
+    def "validate returns valid when constraint is not enabled"() {
+
+    }
+
+    def "validate returns invalid when constraint is set to validateable type and constraints fail"() {
         given:
         constraint = new CascadeConstraint(
                 ValidateableParent,
@@ -103,7 +108,7 @@ class CascadeValidationConstraintSpec extends Specification {
         })
     }
 
-    def "validateWithVetoing returns invalid when constraint is set to validateable type and constraints fail on list"() {
+    def "validate returns invalid when constraint is set to validateable type and constraints fail on list"() {
         given:
         constraint = new CascadeConstraint(
                 ValidateableParentWithChildList,

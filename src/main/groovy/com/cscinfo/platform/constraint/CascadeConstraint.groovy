@@ -20,8 +20,6 @@ import org.springframework.validation.FieldError
  */
 @CompileStatic
 class CascadeConstraint extends AbstractConstraint {
-    boolean enabled = true
-
     static final String CASCADE_CONSTRAINT = "cascade"
 
     CascadeConstraint(Class<?> constraintOwningClass, String constraintPropertyName, Object constraintParameter, MessageSource messageSource) {
@@ -30,13 +28,6 @@ class CascadeConstraint extends AbstractConstraint {
         if (!(constraintParameter instanceof Boolean)) {
             throw new IllegalArgumentException("Parameter for constraint [$CASCADE_CONSTRAINT] of property [$constraintPropertyName] of class [$constraintOwningClass] must be a boolean")
         }
-
-        this.enabled = (boolean) constraintParameter
-    }
-
-    @Override
-    protected Object validateParameter(Object constraintParameter) {
-        return constraintParameter
     }
 
     boolean supports(Class type) {
@@ -74,6 +65,10 @@ class CascadeConstraint extends AbstractConstraint {
             throw new NoSuchMethodException("Error validating field [${constraintPropertyName}]. Unable to apply 'cascade' constraint on [${value.class}] because the object does not have a validate() method. If the object is a command object, you may need to add the @Validateable annotation to the class definition.")
         }
 
+        if (!getParameter()) {
+            return
+        }
+
         if (value.validate()) {
             return
         }
@@ -96,15 +91,11 @@ class CascadeConstraint extends AbstractConstraint {
         }
     }
 
-    boolean supports(Class type) {
-        Collection.isAssignableFrom(type) || type.metaClass.respondsTo(type, 'validate')
-    }
-
     @Override
     protected Object validateParameter(Object constraintParameter) {
         if (!(constraintParameter instanceof Boolean)) {
             throw new IllegalArgumentException("Parameter for constraint [" +
-                    NAME+ "] of property [" +
+                    CASCADE_CONSTRAINT + "] of property [" +
                     constraintPropertyName + "] of class [" + constraintOwningClass +
                     "] must be a boolean value")
         }
