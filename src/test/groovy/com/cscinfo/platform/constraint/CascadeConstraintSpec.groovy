@@ -9,8 +9,9 @@ import org.springframework.validation.Errors
 import org.springframework.validation.FieldError
 import spock.lang.Specification
 /**
- * @author: rmorrise
+ * @author rmorrise
  * @author Eric Kelm
+ * @author virtualdogbert
  */
 class CascadeConstraintSpec extends Specification {
     CascadeConstraint  constraint
@@ -68,7 +69,33 @@ class CascadeConstraintSpec extends Specification {
     }
 
     def "validate returns valid when constraint is not enabled"() {
+        given:
+        constraint = new CascadeConstraint(
+                ValidateableParent,
+                'property',
+                false, messageSource)
+        def target = Mock(ValidateableProperty)
+        def childErrors = Mock(Errors)
+        def rejected = Mock(Object)
+        String[] codes = ['A', 'B']
+        def defaultMessage = 'default'
+        Object[] args = [Mock(Object)]
 
+        def field = 'field'
+        def fieldError = new FieldError('obj', field, rejected, true, codes,
+                args, defaultMessage)
+        def fieldErrors = [fieldError]
+        def parentName = 'foo'
+
+        when:
+        def result = constraint.validate(parent, target, errors)
+
+        then:
+        0 * target.validate()
+        0 * target.errors
+        0 * childErrors.fieldErrors
+        0 * errors.objectName
+        0 * errors.addError(_)
     }
 
     def "validate returns invalid when constraint is set to validateable type and constraints fail"() {
