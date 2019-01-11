@@ -167,7 +167,21 @@ class CascadeConstraintSpec extends Specification {
         1 * child1Errors.fieldErrors >> fieldErrors
         1 * child2Errors.fieldErrors >> fieldErrors
         target.size() * errors.objectName >> parentName
-        2 * errors.addError(_)
+        1 * errors.addError({
+            it.objectName == parentName &&
+                    it.field == "children.0." + field &&
+                    it.bindingFailure == true &&
+                    it.codes == codes &&
+                    it.arguments == args &&
+                    it.defaultMessage == defaultMessage
+        })
+        1 * errors.addError({
+            it.objectName == parentName && it.field == "children.1." + field &&
+                    it.bindingFailure == true &&
+                    it.codes == codes &&
+                    it.arguments == args &&
+                    it.defaultMessage == defaultMessage
+        })
     }
 
     def "constraint does not support non-validateable types"() {
