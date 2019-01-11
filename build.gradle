@@ -7,7 +7,7 @@ buildscript {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
     }
 }
-version "3.0.0"
+version "3.0.1"
 group "org.grails.plugins"
 
 apply plugin: 'eclipse'
@@ -15,8 +15,8 @@ apply plugin: 'idea'
 apply plugin: "org.grails.grails-plugin"
 apply plugin: "org.grails.grails-plugin-publish"
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenLocal()
@@ -35,6 +35,8 @@ dependencies {
     testCompile "cglib:cglib-nodep:3.2.5"
     testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails:grails-plugin-testing"
+    testCompile "org.grails:grails-web-testing-support"
+    testCompile 'net.bytebuddy:byte-buddy-dep:1.8.12'
 }
 
 bootRun {

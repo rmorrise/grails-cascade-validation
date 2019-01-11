@@ -1,6 +1,8 @@
 package com.cscinfo.platform.constraint
 
-import org.grails.datastore.gorm.validation.constraints.AbstractVetoingConstraint
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
+import org.grails.datastore.gorm.validation.constraints.AbstractConstraint
 import org.springframework.context.MessageSource
 import org.springframework.validation.Errors
 import org.springframework.validation.FieldError
@@ -16,67 +18,84 @@ import org.springframework.validation.FieldError
  * @author Eric Kelm
  * @author Russell Morrisey
  */
-class CascadeValidationConstraint extends AbstractVetoingConstraint {
-    public static final String NAME = "cascadeValidate"
+@CompileStatic
+class CascadeConstraint extends AbstractConstraint {
+    static final String CASCADE_CONSTRAINT = "cascade"
 
-    private final boolean cascade
-
-    CascadeValidationConstraint(Class<?> constraintOwningClass, String constraintPropertyName, Object constraintParameter, MessageSource messageSource) {
+    CascadeConstraint(Class<?> constraintOwningClass, String constraintPropertyName, Object constraintParameter, MessageSource messageSource) {
         super(constraintOwningClass, constraintPropertyName, constraintParameter, messageSource)
-        this.cascade = (Boolean) constraintParameter
-    }
 
-    String getName() { NAME }
-
-    @Override
-    protected boolean processValidateWithVetoing(target, propertyValue, Errors errors) {
-        boolean result = false
-
-        if (propertyValue instanceof Collection) {
-            propertyValue.eachWithIndex { item, pvIdx ->
-                result = validateValue(target, item, errors, pvIdx) || result
-            }
-        } else {
-            result = validateValue(target, propertyValue, errors)
+        if (!(constraintParameter instanceof Boolean)) {
+            throw new IllegalArgumentException("Parameter for constraint [$CASCADE_CONSTRAINT] of property [$constraintPropertyName] of class [$constraintOwningClass] must be a boolean")
         }
-
-        return result
-    }
-
-    private boolean validateValue(target, value, errors, index = null) {
-        if (!value.respondsTo('validate')) {
-            throw new NoSuchMethodException("Error validating field [${constraintPropertyName}]. Unable to apply 'cascade' constraint on [${value.class}] because the object does not have a validate() method. If the object is a command object, you may need to add the @Validateable annotation to the class definition.")
-        }
-
-        if (value.validate()) {
-            return false
-        }
-
-        String objectName = target.errors.objectName
-        Errors childErrors = value.errors
-        List<FieldError> childFieldErrors = childErrors.fieldErrors
-        childFieldErrors.each { FieldError childFieldError ->
-            String field
-            if(index != null) {
-                field = "${propertyName}.${index}.${childFieldError.field}"
-            } else {
-                field = "${propertyName}.${childFieldError.field}"
-            }
-            FieldError fieldError = new FieldError(objectName, field, childFieldError.rejectedValue, childFieldError.bindingFailure, childFieldError.codes, childFieldError.arguments, childFieldError.defaultMessage)
-            errors.addError(fieldError)
-        }
-        return true
     }
 
     boolean supports(Class type) {
         Collection.isAssignableFrom(type) || type.metaClass.respondsTo(type, 'validate')
     }
 
+    String getName() {
+        return CASCADE_CONSTRAINT
+    }
+
+    protected void processValidate(Object target, Object propertyValue, Errors errors) {
+
+        boolean result = false
+
+        if (propertyValue instanceof Collection) {
+            propertyValue.eachWithIndex { item, pvIdx ->
+                validateValue(target, item, errors, pvIdx) || result
+            }
+        } else {
+            validateValue(target, propertyValue, errors)
+        }
+    }
+
+    /**
+     * Processes the validation of the propertyValue, against the checks patterns set, and setting and calling rejectValue
+     * if the propertyValue matches any of the patterns in the checks list.
+     *
+     * @param target The target field to verify.
+     * @param propertyValue the property value of the field.
+     * @param errors Errors to be sent by rejectValues,.
+     */
+    @CompileDynamic
+    private void validateValue(target, value, errors, index = null) {
+        if (!value.respondsTo('validate')) {
+            throw new NoSuchMethodException("Error validating field [${constraintPropertyName}]. Unable to apply 'cascade' constraint on [${value.class}] because the object does not have a validate() method. If the object is a command object, you may need to add the @Validateable annotation to the class definition.")
+        }
+
+        if (!getParameter()) {
+            return
+        }
+
+        if (value.validate()) {
+            return
+        }
+
+        String objectName = target.errors.objectName
+        Errors childErrors = value.errors
+        List<FieldError> childFieldErrors = childErrors.fieldErrors
+
+        childFieldErrors.each { FieldError childFieldError ->
+            String field
+
+            if (index != null) {
+                field = "${propertyName}.${index}.${childFieldError.field}"
+            } else {
+                field = "${propertyName}.${childFieldError.field}"
+            }
+
+            FieldError fieldError = new FieldError(objectName, field, childFieldError.rejectedValue, childFieldError.bindingFailure, childFieldError.codes, childFieldError.arguments, childFieldError.defaultMessage)
+            errors.addError(fieldError)
+        }
+    }
+
     @Override
     protected Object validateParameter(Object constraintParameter) {
         if (!(constraintParameter instanceof Boolean)) {
             throw new IllegalArgumentException("Parameter for constraint [" +
-                    NAME+ "] of property [" +
+                    CASCADE_CONSTRAINT + "] of property [" +
                     constraintPropertyName + "] of class [" + constraintOwningClass +
                     "] must be a boolean value")
         }
