@@ -29,7 +29,14 @@ Used with permission.
     def issueManagement = [system: 'GITHUB', url: 'https://github.com/rmorrise/grails-cascade-validation/issues']
     def scm = [url: 'https://github.com/rmorrise/grails-cascade-validation']
 
-    def developers = [[name: "Soeren Glasius", email: "soeren@glasius.dk"], [name: "Russell Morrisey", email: "russell.morrisey@cscglobal.com"]]
+    def developers = [
+            [name: "Burt Beckwith"],
+            [name: "Soeren Glasius", email: "soeren@glasius.dk"],
+            [name: "Eric Kelm"],
+            [name: "Russell Morrisey", email: "russell.morrisey@cscglobal.com"],
+            [name: "Christian Oestreich"],
+            [name: "Virtualdogbert"]
+    ]
 
     void doWithApplicationContext() {
         registerCustomConstraints(applicationContext)
