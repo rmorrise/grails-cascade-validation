@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
      //CSC custom plugin for 'cascade' constraint
-     compile "compile 'org.grails.plugins:cascade-validation:3.0.1"
+     compile "org.grails.plugins:cascade-validation:3.0.1"
 }
 ```
 
