@@ -8,7 +8,7 @@ import org.grails.datastore.gorm.validation.constraints.eval.DefaultConstraintEv
 import org.grails.datastore.gorm.validation.constraints.registry.ConstraintRegistry
 import org.springframework.context.ApplicationContext
 
-class GrailsCascadeValidationGrailsPlugin extends Plugin {
+class CascadeValidationGrailsPlugin extends Plugin {
 
     def grailsVersion = "3.3.0 > *"
     def title = "Cascade Validation Plugin"
@@ -29,31 +29,26 @@ Used with permission.
     def issueManagement = [system: 'GITHUB', url: 'https://github.com/rmorrise/grails-cascade-validation/issues']
     def scm = [url: 'https://github.com/rmorrise/grails-cascade-validation']
 
-    def developers = [ [ name: "Soeren Glasius", email: "soeren@glasius.dk" ], [ name: "Russell Morrisey", email: "russell.morrisey@cscglobal.com" ]]
-
-    //Class<? extends Constraint> constraintClass, MessageSource messageSource, List<Class> targetTypes = [Object]
-    Closure doWithSpring() {{ ->
-        cascadeValidationConstraintFactory(DefaultConstraintFactory, CascadeValidationConstraint, null)
-    }}
+    def developers = [[name: "Soeren Glasius", email: "soeren@glasius.dk"], [name: "Russell Morrisey", email: "russell.morrisey@cscglobal.com"]]
 
     void doWithApplicationContext() {
-           registerCustomConstraints(applicationContext)
-       }
+        registerCustomConstraints(applicationContext)
+    }
 
-       private void registerCustomConstraints(ApplicationContext ctx) {
-           //This method for registering constraints came from longwa
-           List<ConstraintRegistry> registries = []
-           DefaultConstraintEvaluator evaluator = ctx.getBean(ConstraintsEvaluator) as DefaultConstraintEvaluator
+    private void registerCustomConstraints(ApplicationContext ctx) {
+        //This method for registering constraints came from longwa
+        List<ConstraintRegistry> registries = []
+        DefaultConstraintEvaluator evaluator = ctx.getBean(ConstraintsEvaluator) as DefaultConstraintEvaluator
 
-           // Register with both the default constraint as well as the gorm registry (it's stupid that it needs both)
-           // Also the ConstraintsEvaluator evaluator constructs a new internal registry and doesn't seem to expose it
-           // so we are forced to invade it's privacy if we want custom constraints for Validateable instances.
-           registries << evaluator.constraintRegistry
-           registries << ctx.getBean("gormValidatorRegistry", ConstraintRegistry)
+        // Register with both the default constraint as well as the gorm registry (it's stupid that it needs both)
+        // Also the ConstraintsEvaluator evaluator constructs a new internal registry and doesn't seem to expose it
+        // so we are forced to invade it's privacy if we want custom constraints for Validateable instances.
+        registries << evaluator.constraintRegistry
+        registries << ctx.getBean("gormValidatorRegistry", ConstraintRegistry)
 
-           registries.each { ConstraintRegistry registry ->
-               registry.addConstraint(CascadeConstraint)
-           }
-       }
+        registries.each { ConstraintRegistry registry ->
+            registry.addConstraint(CascadeConstraint)
+        }
+    }
 
 }
