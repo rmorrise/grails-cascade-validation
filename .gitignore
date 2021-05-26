@@ -4,6 +4,7 @@
 /target
 /classes
 /build
+/out
 /web-app/WEB-INF
 grails-cascade-validation-*.zip
 grails-cascade-validation-*.zip.sha1

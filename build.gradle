@@ -1,7 +1,4 @@
 buildscript {
-    ext {
-        grailsVersion = project.grailsVersion
-    }
     repositories {
         mavenLocal()
         maven { url "https://repo.grails.org/grails/core" }
@@ -10,27 +7,13 @@ buildscript {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
     }
 }
-
-plugins {
-    id "com.jfrog.bintray" version "1.2"
-}
-
-version "3.0.0"
+version "3.0.1"
 group "org.grails.plugins"
 
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin:'org.grails.grails-plugin'
-apply plugin:'org.grails.grails-plugin-publish'
-
-// Used for publishing to central repository, remove if not needed
-//apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/grailsCentralPublishing.gradle'
-//apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/bintrayPublishing.gradle'
-
-ext {
-    grailsVersion = project.grailsVersion
-    gradleWrapperVersion = project.gradleWrapperVersion
-}
+apply plugin: "org.grails.grails-plugin"
+apply plugin: "org.grails.grails-plugin-publish"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -41,51 +24,35 @@ repositories {
     maven { url "https://repo.grails.org/grails/core" }
 }
 
-dependencyManagement {
-    imports {
-        mavenBom "org.grails:grails-bom:$grailsVersion"
-    }
-    applyMavenExclusions false
-}
-
 dependencies {
-    provided 'org.springframework.boot:spring-boot-starter-logging'
-    provided "org.springframework.boot:spring-boot-starter-actuator"
-    provided "org.springframework.boot:spring-boot-autoconfigure"
-    provided "org.springframework.boot:spring-boot-starter-tomcat"
-
-    provided "org.grails:grails-web-boot"
-    provided "org.grails:grails-dependencies"
-    provided 'javax.servlet:javax.servlet-api:3.1.0'
-
+    compile 'org.springframework.boot:spring-boot-starter-logging'
+    compile "org.springframework.boot:spring-boot-autoconfigure"
+    compile "org.grails:grails-core"
+    console "org.grails:grails-console"
+    profile "org.grails.profiles:plugin"
+    provided "org.grails:grails-plugin-services"
+    provided "org.grails:grails-plugin-domain-class"
+    testCompile "cglib:cglib-nodep:3.2.5"
     testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails:grails-plugin-testing"
     testCompile "org.grails:grails-web-testing-support"
     testCompile 'net.bytebuddy:byte-buddy-dep:1.8.12'
-
-
-    console "org.grails:grails-console"
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = gradleWrapperVersion
+bootRun {
+    jvmArgs('-Dspring.output.ansi.enabled=always')
+    addResources = true
 }
 
-bintray {
-    user = System.getenv("BINTRAY_USER") ?: project.hasProperty("bintrayUser") ? project.bintrayUser : ''
-    key = System.getenv("BINTRAY_KEY") ?: project.hasProperty("bintrayKey") ? project.bintrayKey : ''
-    publications = ['maven']
-    pkg {
-        repo = 'grails-plugins'
-        userOrg = 'ctoestreich'
-        name = "cascade-validation"
-        desc = "Grails Cascade Validation Plugin"
-        websiteUrl = "http://grails.org/plugin/grails-cascade-validation"
-        issueTrackerUrl = "https://github.com/Grails-Plugin-Consortium/grails-cascade-validation/issues"
-        vcsUrl = "https://github.com/Grails-Plugin-Consortium/grails-cascade-validation"
-        licenses = ['Apache-2.0']
-        publicDownloadNumbers = true
+grailsPublish {
+    userOrg = 'cscpublicgrails' // Optional
+    repo = 'plugins'       // Optional, default to 'plugins'
+    githubSlug = 'rmorrise/grails-cascade-validation'
+    license {
+        name = 'Apache-2.0'
     }
+    title = "grails-cascade-validation"
+    desc = """This plugin establishes a 'cascade' constraint property for validateable objects. If "cascade:true" is set on a nested object, the nested object's validate() method will be invoked and the results will be reported as part of the parent object's validation."""
+    developers = [rmorrise:"Russell Morrisey", sbglasius: "Søren Berg Glasius", asoftwareguy: "Eric Kelm", burtbeckwith: "Burt Beckwith",
+                  ctoestreich: "Christian Oestreich", virtualdogbert: "Virtualdogbert"]
 }
-
-bintrayUpload.dependsOn sourcesJar, javadocJar

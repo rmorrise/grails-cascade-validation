@@ -64,7 +64,7 @@ class CascadeValidationConstraintSpec extends Specification {
         def target = Mock(ValidateableProperty)
 
         when:
-        def result = constraint.validate(parent, target, errors)
+        constraint.validate(parent, target, errors)
 
         then:
         1 * target.validate() >> true
@@ -94,7 +94,7 @@ class CascadeValidationConstraintSpec extends Specification {
         def parentName = 'foo'
 
         when:
-        def result = constraint.validate(parent, target, errors)
+        constraint.validate(parent, target, errors)
 
         then:
         1 * target.validate() >> false
@@ -136,7 +136,7 @@ class CascadeValidationConstraintSpec extends Specification {
         def parentName = 'foo'
 
         when:
-        def result = constraint.validate(parent, target, errors)
+        constraint.validate(parent, target, errors)
 
         then:
         1 * child1.validate() >> false
