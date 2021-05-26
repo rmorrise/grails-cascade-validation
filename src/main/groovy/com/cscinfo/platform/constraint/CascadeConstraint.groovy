@@ -48,12 +48,9 @@ class CascadeConstraint extends AbstractConstraint {
     }
 
     protected void processValidate(Object target, Object propertyValue, Errors errors) {
-
-        boolean result = false
-
         if (propertyValue instanceof Collection) {
             propertyValue.eachWithIndex { item, pvIdx ->
-                validateValue(target, item, errors, pvIdx) || result
+                validateValue(target, item, errors, pvIdx)
             }
         } else {
             validateValue(target, propertyValue, errors)
@@ -71,7 +68,7 @@ class CascadeConstraint extends AbstractConstraint {
     @CompileDynamic
     private void validateValue(target, value, errors, index = null) {
         if (!value.respondsTo('validate')) {
-            throw new NoSuchMethodException("Error validating field [${constraintPropertyName}]. Unable to apply 'cascade' constraint on [${value.class}] because the object does not have a validate() method. If the object is a command object, you may need to add the @Validateable annotation to the class definition.")
+            throw new NoSuchMethodException("Error validating field [${constraintPropertyName}]. Unable to apply 'cascade' constraint on [${value.class}] because the object does not have a validate() method. If the object is a command object, you may need to implement grails.validation.Validateable on the class definition.")
         }
 
         if (value.validate()) {

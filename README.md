@@ -49,11 +49,12 @@ This plugin was originally based on a blog post by Eric Kelm and is used here wi
 
 NOTE:
 
-When running a unit test, the cascade constraint isn't registered with grails. To work around this issue, the following code must be added to the setup() method of the test:
+When running a unit test, the cascade constraint isn't registered with Grails. To work around this issue, the test class must implement
+`GrailsUnitTest` and the following code must be added to the `setup()` method of the test:
 
 ```groovy
-    def setup() {
-        ConstrainedProperty.registerNewConstraint(CascadeValidationConstraint.NAME, CascadeValidationConstraint)
-    }
+     def setup() {
+        CascadeConstraintRegistration.register(applicationContext)
+     }
 ```
-
+This will register the `CascadeConstraint` the same way as the plugin does at runtime.
