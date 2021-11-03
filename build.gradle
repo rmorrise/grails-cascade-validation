@@ -6,13 +6,11 @@ buildscript {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
     }
 }
-version "4.0.0"
+version "4.0.0-SNAPSHOT"
 group "org.grails.plugins"
 
-apply plugin: 'eclipse'
-apply plugin: 'idea'
 apply plugin: "org.grails.grails-plugin"
-apply plugin: "org.grails.grails-plugin-publish"
+apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -59,20 +57,40 @@ tasks.withType(GroovyCompile) {
         forkOptions.jvmArgs = ['-Xmx1024m']
     }
 }
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = project.group
+            artifactId = 'grails-cascade-validation'
+            version = project.version
 
-grailsPublish {
-    userOrg = 'cscpublicgrails' // Optional
-    repo = 'plugins'       // Optional, default to 'plugins'
-    githubSlug = 'rmorrise/grails-cascade-validation'
-    license {
-        name = 'Apache-2.0'
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom {
+                name = 'grails-cascade-validation'
+                description = """This plugin establishes a 'cascade' constraint property for validateable objects. If "cascade:true" is set on a nested object, the nested object's validate() method will be invoked and the results will be reported as part of the parent object's validation."""
+                url = 'https://github.com/rmorrise/grails-cascade-validation'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'rmorrise'
+                        name = 'Russell Morisse'
+                        email = 'russell.morisey@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/rmorrise/grails-cascade-validation.git'
+                    developerConnection = 'scm:git:ssh://github.com:rmorrise/grails-cascade-validation.git'
+                    url = 'https://github.com/rmorrise/grails-cascade-validation/tree/main'
+                }
+            }
+        }
     }
-    title = "grails-cascade-validation"
-    desc = """This plugin establishes a 'cascade' constraint property for validateable objects. If "cascade:true" is set on a nested object, the nested object's validate() method will be invoked and the results will be reported as part of the parent object's validation."""
-    developers = [rmorrise      : "Russell Morrisey",
-                  sbglasius     : "Søren Berg Glasius",
-                  asoftwareguy  : "Eric Kelm",
-                  burtbeckwith  : "Burt Beckwith",
-                  ctoestreich   : "Christian Oestreich",
-                  virtualdogbert: "Virtualdogbert"]
 }

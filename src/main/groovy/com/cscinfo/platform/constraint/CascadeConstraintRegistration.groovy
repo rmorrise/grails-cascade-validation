@@ -1,5 +1,6 @@
 package com.cscinfo.platform.constraint
 
+import groovy.util.logging.Slf4j
 import org.grails.datastore.gorm.validation.constraints.eval.ConstraintsEvaluator
 import org.grails.datastore.gorm.validation.constraints.eval.DefaultConstraintEvaluator
 import org.grails.datastore.gorm.validation.constraints.registry.ConstraintRegistry
@@ -7,6 +8,7 @@ import org.grails.datastore.gorm.validation.constraints.registry.DefaultValidato
 import org.grails.datastore.mapping.validation.ValidatorRegistry
 import org.springframework.context.ApplicationContext
 
+@Slf4j
 class CascadeConstraintRegistration {
     static void register(ApplicationContext applicationContext) {
         registerCascadeConstraintOnBeans(applicationContext, ConstraintsEvaluator, DefaultConstraintEvaluator) {
@@ -26,6 +28,7 @@ class CascadeConstraintRegistration {
                 ConstraintRegistry reg = closure.call(evaluator)
                 reg?.addConstraint(CascadeConstraint)
             }
+            log.debug("Registered CascadeConstraint on $name evaluator on $interfaceClass")
         }
     }
 }
