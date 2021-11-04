@@ -84,6 +84,27 @@ publishing {
                         name = 'Russell Morisse'
                         email = 'russell.morisey@gmail.com'
                     }
+                    developer {
+                        id = 'asoftwareguy'
+                        name = 'Eric Kelm'
+                    }
+                    developer {
+                        id = 'burtbeckwith'
+                        name = 'Burt Beckwith'
+                    }
+                    developer {
+                        id = 'ctoestreich'
+                        name = 'Christian Oestreich'
+                    }
+                    developer {
+                        id = 'virtualdogbert'
+                        name = 'Virtual Dogbert'
+                    }
+                    developer {
+                        id = 'sbglasius'
+                        name = 'Søren  Berg Glasius'
+                        email = 'soeren@glasius.dk'
+                    }
                 }
                 scm {
                     connection = 'scm:git:git://github.com/rmorrise/grails-cascade-validation.git'
