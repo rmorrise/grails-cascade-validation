@@ -1,3 +1,11 @@
+***THIS PROJECT HAS BEEN MOVED.***
+
+The latest version is now available at:
+https://github.com/gpc/grails-cascade-validation
+
+This fork is no longer maintained.
+
+
 grails-cascade-validation
 =========================
 
